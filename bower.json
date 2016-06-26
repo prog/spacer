@@ -1,0 +1,7 @@
+{
+	"name": "spacer",
+	"private": true,
+	"dependencies": {
+		"three.js": "^0.78.0"
+	}
+}

@@ -1,0 +1,8 @@
+/bin/server.js
+/node_modules/
+/public/res/bundle.css
+/public/res/bundle.css.map
+/public/res/bundle.js
+/public/res/bundle.js.map
+/public/res/lib/
+/typings/
