@@ -33,7 +33,7 @@ export default class Ship extends BaseShip {
 		}
 
 		this.object.position.set(this.position.x + scratchX, this.position.y + scratchY, 0.0);
-		this.object.rotation.z = this.orientation - constants.PIHALF;
+		this.object.rotation.z = this.rotation - constants.PIHALF;
 	}
 
 }

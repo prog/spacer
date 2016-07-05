@@ -13,9 +13,9 @@ export default class Rocket extends Object {
 	protected enginePower: number;
 
 
-	protected getEngineForce(): Vector {
+	protected getEnginesForce(): Vector {
 		if (this.fuel > 0) {
-			return Vector.fromAngle(this.orientation, this.enginePower);
+			return Vector.fromAngle(this.rotation, this.enginePower);
 		} else {
 			return new Vector(0, 0);
 		}
@@ -36,6 +36,7 @@ export default class Rocket extends Object {
 
 	public tick() {
 		this.tickMovement();
+		
 		if (this.fuel > 0) {
 			this.fuel -= 1;
 		} else if (this.timer > 0) {

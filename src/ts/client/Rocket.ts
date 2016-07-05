@@ -20,7 +20,7 @@ export default class Shot extends CommonRocket {
 
 	public beforeRender(): void {
 		this.object.position.set(this.position.x, this.position.y, -1.0);
-		this.object.rotation.z = this.orientation - constants.PIHALF;
+		this.object.rotation.z = this.rotation - constants.PIHALF;
 	}
 
 }

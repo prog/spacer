@@ -9,15 +9,27 @@ export default class Object {
 	protected game: Game;
 
 	public mass: number;
-	public dragCoefficient;
+	public dragCoefficient: number;
 
 	public position: Vector;
-	public orientation: number;
 	public velocity: Vector;
+	public rotation: number;
+	public angularSpeed: number;
 
 
-	protected getEngineForce(): Vector {
+	protected getDragForce(): Vector {
+		const enviromentViscosity = this.game.getEnviromentViscosity(this.position);
+		return this.velocity.clone().scale(-enviromentViscosity * this.dragCoefficient);
+	}
+
+
+	protected getEnginesForce(): Vector {
 		return new Vector(0, 0);
+	}
+
+
+	protected getRotationForce(): number {
+		return 0;
 	}
 
 
@@ -25,23 +37,16 @@ export default class Object {
 		this.game = game;
 
 		this.position = new Vector();
-		this.orientation = 0;
 		this.velocity = new Vector();
+		this.rotation = 0;
+		this.angularSpeed = 0;
 	}
 
 
 	protected tickMovement() {
-		// dragForce = -(this.velocity * this.dragCoefficient * enviromentViscosity)
-		// engineForce = getEngineForce()
-		// force = dragForce + engineForce
-		// acceleration = force / this.mass
-		// velocity += acceleration
-		// position += velocity
-
-		const enviromentViscosity = this.game.getEnviromentViscosity(this.position);
-		const acceleration = this.velocity.clone()
-			.scale(-enviromentViscosity * this.dragCoefficient)
-			.add(this.getEngineForce())
+		const acceleration = (new Vector())
+			.add(this.getDragForce())
+			.add(this.getEnginesForce())
 			.scale(1 / this.mass);
 
 		this.velocity.add(acceleration);
@@ -49,8 +54,16 @@ export default class Object {
 	}
 
 
+	protected tickRotation() {
+		const angularAcceleration = this.getRotationForce() / this.mass;
+		this.angularSpeed += angularAcceleration;
+		this.rotation += this.angularSpeed;
+	}
+
+
 	public tick(): void {
 		this.tickMovement();
+		this.tickRotation();
 	}
 
 }

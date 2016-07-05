@@ -62,7 +62,7 @@ export default class Game extends BaseGame {
 	protected updateCamera(ship: Ship, viewportAspectRatio: number) {
 		const containBaseWidth = 100;
 		const containBaseHeight = 100;
-		const maxSpeedZoomOut = 3.0;
+		const maxSpeedZoomOut = 5.0;
 
 		const speed = ship.velocity.getSize();
 		const speedMax = ship.getMaxSpeed();
