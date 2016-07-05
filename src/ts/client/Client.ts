@@ -1,15 +1,11 @@
 import Game from "./Game";
 import Ship from "./Ship";
+import * as keys from "./keys";
 declare var io: SocketIOClientStatic;
 
 
 
 export default class Client {
-
-	protected KEY_UP = 38;
-	protected KEY_DOWN = 40;
-	protected KEY_LEFT = 37;
-	protected KEY_RIGHT = 39;
 
 
 	protected game: Game;
@@ -77,15 +73,20 @@ export default class Client {
 	protected handleKey(evt: KeyboardEvent) {
 		const keyDown = ("keydown" === evt.type);
 		switch (evt.keyCode) {
-			case this.KEY_UP:
+			case keys.UP:
 				this.ship.isEngineOn = keyDown;
 				break;
-			case this.KEY_LEFT:
+			case keys.LEFT:
 				this.ship.isRotatingLeft = keyDown;
 				break;
-			case this.KEY_RIGHT:
+			case keys.RIGHT:
 				this.ship.isRotatingRight = keyDown;
 				break;
+			case keys.CTRL:
+				this.ship.isRocketFireOn = keyDown;
+				break;
+			default:
+				// console.log(evt.keyCode);
 		}
 	}
 

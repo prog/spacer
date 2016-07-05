@@ -1,5 +1,6 @@
 import BaseGame from "./../common/Game";
 import Ship from "./Ship";
+import Rocket from "./Rocket";
 import * as assets from "./assets";
 
 
@@ -23,7 +24,7 @@ export default class Game extends BaseGame {
 		this.backgroundTexture = new THREE.TextureLoader().load("res/images/857-tileable-classic-nebula-space-patterns/2.jpg");
 		this.backgroundTexture.wrapS = THREE.RepeatWrapping;
 		this.backgroundTexture.wrapT = THREE.RepeatWrapping;
-		this.background = new THREE.Mesh(assets.basePlane, new THREE.MeshBasicMaterial({map: this.backgroundTexture}));
+		this.background = new THREE.Mesh(assets.planeGeometry, new THREE.MeshBasicMaterial({map: this.backgroundTexture}));
 		this.background.position.z = -1;
 
 		this.scene.add(this.background);
@@ -41,6 +42,20 @@ export default class Game extends BaseGame {
 	public removeShip(ship: Ship): void {
 		this.scene.remove(ship.object);
 		super.removeShip(ship);
+	}
+
+
+	public createRocket(): Rocket {
+		const rocket = new Rocket(this);
+		this.rockets.push(rocket);
+		this.scene.add(rocket.object);
+		return rocket;
+	}
+
+
+	public removeRocket(rocket: Rocket): void {
+		this.scene.remove(rocket.object);
+		super.removeRocket(rocket);
 	}
 
 
@@ -100,6 +115,7 @@ export default class Game extends BaseGame {
 
 	public render(renderer: THREE.Renderer, ship: Ship, viewportAspectRatio: number) {
 		this.ships.forEach((ship: Ship) => ship.beforeRender());
+		this.rockets.forEach((rocket: Rocket) => rocket.beforeRender());
 		this.updateCamera(ship, viewportAspectRatio);
 		this.updateBackground();
 		renderer.render(this.scene, this.camera);

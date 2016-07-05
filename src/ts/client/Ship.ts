@@ -1,6 +1,7 @@
 import BaseShip from "./../common/Ship";
-import {shipGeometry, shipMaterial} from "./assets";
 import Game from "./Game";
+import * as assets from "./assets";
+import * as constants from "./../common/constants";
 
 
 
@@ -12,7 +13,8 @@ export default class Ship extends BaseShip {
 
 	public constructor(game: Game) {
 		super(game);
-		this.object = new THREE.Mesh(shipGeometry, shipMaterial);
+		this.object = new THREE.Mesh(assets.planeGeometry, assets.shipMaterial);
+		this.object.scale.set(10, 10, 1);
 	}
 
 
@@ -31,7 +33,7 @@ export default class Ship extends BaseShip {
 		}
 
 		this.object.position.set(this.position.x + scratchX, this.position.y + scratchY, 0.0);
-		this.object.rotation.z = (this.orientation - 90) * 2 * Math.PI / 360;
+		this.object.rotation.z = this.orientation - constants.PIHALF;
 	}
 
 }

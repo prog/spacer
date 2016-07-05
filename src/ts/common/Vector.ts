@@ -11,31 +11,62 @@ export default class Vector {
 	}
 
 
-	public add(v: Vector): void {
+	public add(v: Vector): Vector {
 		this.x += v.x;
 		this.y += v.y;
+		return this;
 	}
 
 
-	public multiply(v: Vector): void {
+	public multiply(v: Vector): Vector {
 		this.x *= v.x;
 		this.y *= v.y;
+		return this;
 	}
 
 
-	public scale(f: number): void {
+	public scale(f: number): Vector {
 		this.x *= f;
 		this.y *= f;
+		return this;
 	}
 
 
-	public clone(): Vector {
-		return new Vector(this.x, this.y);
+	public setSize(f: number): Vector {
+		return this.scale(f/this.getSize());
+	}
+
+
+	public flip(): Vector {
+		return this.scale(-1);
+	}
+
+
+	public rotate90L(): Vector {
+		const tmp = this.y;
+		this.y = this.x;
+		this.x = -tmp;
+		return this;
+	}
+
+
+
+	public rotate90R(): Vector {
+		const tmp = this.x;
+		this.x = this.y;
+		this.y = -tmp;
+		return this;
 	}
 
 
 	public getSize(): number {
 		return Math.sqrt(this.x * this.x + this.y * this.y);
+	}
+
+
+
+	public clone(): Vector {
+		return new Vector(this.x, this.y);
 	}
 
 

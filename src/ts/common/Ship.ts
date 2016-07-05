@@ -1,25 +1,39 @@
 import Object from "./Object";
 import Vector from "./Vector";
 import Game from "./Game";
+import * as constants from "./constants";
 
 
 
 export default class Ship extends Object {
 
 
-	public mass: number = 20;
-	public dragCoefficient = 0.1;
-	public enginePower: number = 4;
-	public rotationSpeed: number = 15;
+	public rotationSpeed: number;
+	public enginePower: number;
+	public isRocketReady: boolean = true;
 
 	public isEngineOn: boolean = false;
 	public isRotatingLeft: boolean = false;
 	public isRotatingRight: boolean = false;
+	public isRocketFireOn: boolean = false;
+
+
+	protected getEngineForce(): Vector {
+		if (this.isEngineOn) {
+			return Vector.fromAngle(this.orientation, this.enginePower);
+		} else {
+			return new Vector(0, 0);
+		}
+	}
 
 
 	public constructor(game: Game) {
 		super(game);
-		this.orientation = 90;
+		this.orientation = constants.PIHALF;
+		this.mass = 20;
+		this.dragCoefficient = 0.1;
+		this.enginePower = 4;
+		this.rotationSpeed = 15.0 * constants.DEG2RAD;
 	}
 
 
@@ -30,47 +44,47 @@ export default class Ship extends Object {
 		// return Math.sqrt(this.enginePower / (this.dragCoefficient * enviromentViscosity));
 	}
 
+	protected launchRocket() {
+		const rocketL = this.game.createRocket();
+		const rocketR = this.game.createRocket();
+		const dirUnit = Vector.fromAngle(this.orientation, 1);
+		const rocketPosition = this.position.clone().add(dirUnit.clone().scale(-1));
+		rocketL.position = rocketPosition.clone().add(dirUnit.clone().rotate90L().scale(3));
+		rocketR.position = rocketPosition.clone().add(dirUnit.clone().rotate90R().scale(3));
+		rocketL.velocity = this.velocity.clone().add(dirUnit.clone().rotate90L().scale(0.5));
+		rocketR.velocity = this.velocity.clone().add(dirUnit.clone().rotate90R().scale(0.5));
+		rocketL.orientation = this.orientation - 2 * constants.DEG2RAD;
+		rocketR.orientation = this.orientation + 2 * constants.DEG2RAD;
+	}
+
 
 	public tick(): void {
-		// dragForce = -(this.velocity * this.dragCoefficient * enviromentViscosity)
-		// engineForce = engineOn ? (this.enginePower * this.shipOrientation) : 0
-		// force = dragForce + engineForce
-		// acceleration = force / this.mass
-		// velocity += acceleration
-		// position += velocity
-
-		const enviromentViscosity = this.game.getEnviromentViscosity(this.position);
-
-		// drag force:
-		const acceleration = this.velocity.clone();
-		// force.multiply(this.velocity);
-		acceleration.scale(-enviromentViscosity * this.dragCoefficient);
-
-		// + engine force:
-		if (this.isEngineOn) {
-			acceleration.add(Vector.fromAngle(this.orientation * 2 * Math.PI / 360.0, this.enginePower));
+		// fire rocket:
+		if (this.isRocketFireOn) {
+			if (this.isRocketReady) {
+				this.launchRocket();
+				this.isRocketReady = false;
+			}
+		} else {
+			this.isRocketReady = true;
 		}
 
-		// acceleration:
-		acceleration.scale(1 / this.mass);
-
-		// update current velocity and position:
-		this.velocity.add(acceleration);
-		this.position.add(this.velocity);
+		this.tickMovement();
 
 		// rotation:
 		if (this.isRotatingLeft) {
 			this.orientation += this.rotationSpeed;
-			if (this.orientation > 360) {
-				this.orientation -= 360;
+			if (this.orientation > constants.PI2) {
+				this.orientation -= constants.PI2;
 			}
 		}
 		if (this.isRotatingRight) {
 			this.orientation -= this.rotationSpeed;
 			if (this.orientation < 0) {
-				this.orientation += 360;
+				this.orientation += constants.PI2;
 			}
 		}
+
 	}
 
 }
