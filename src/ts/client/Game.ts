@@ -2,6 +2,8 @@ import BaseGame from "./../common/Game";
 import Ship from "./Ship";
 import Rocket from "./Rocket";
 import * as assets from "./assets";
+import SmokeParticle from "./SmokeParticle";
+import Particle from ".//SmokeParticle";
 
 
 
@@ -56,6 +58,20 @@ export default class Game extends BaseGame {
 	public removeRocket(rocket: Rocket): void {
 		this.scene.remove(rocket.object);
 		super.removeRocket(rocket);
+	}
+
+
+	public createSmokeParticle(): SmokeParticle {
+		const particle = new SmokeParticle(this);
+		this.particles.push(particle);
+		this.scene.add(particle.object);
+		return particle;
+	}
+
+
+	public removeParticle(particle: Particle) {
+		this.scene.remove(particle.object);
+		super.removeParticle(particle);
 	}
 
 
@@ -116,6 +132,7 @@ export default class Game extends BaseGame {
 	public render(renderer: THREE.Renderer, ship: Ship, viewportAspectRatio: number) {
 		this.ships.forEach((ship: Ship) => ship.beforeRender());
 		this.rockets.forEach((rocket: Rocket) => rocket.beforeRender());
+		this.particles.forEach((particle: Particle) => particle.beforeRender());
 		this.updateCamera(ship, viewportAspectRatio);
 		this.updateBackground();
 		renderer.render(this.scene, this.camera);
