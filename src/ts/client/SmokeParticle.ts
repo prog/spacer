@@ -1,15 +1,13 @@
-import CommonSmokeParticle from "./../common/SmokeParticle";
 import Game from "./Game";
+import Particle from "./Particle";
+import Vector from "./../common/Vector";
 import * as assets from "./assets";
 import * as constants from "./../common/constants";
-import Vector from "../common/Vector";
 
 
 
-export default class SmokeParticle extends CommonSmokeParticle {
+export default class SmokeParticle extends Particle {
 
-
-	public object: THREE.Object3D;
 
 	protected startSize;
 	protected finalSize;
@@ -20,6 +18,9 @@ export default class SmokeParticle extends CommonSmokeParticle {
 
 	public constructor(game: Game) {
 		super(game);
+		this.mass = 1;
+		this.dragCoefficient = 0.1;
+
 		this.material = assets.smokeParticleMaterial.clone();
 		this.object = new THREE.Mesh(assets.planeGeometry, this.material);
 		this.startSize = 4;

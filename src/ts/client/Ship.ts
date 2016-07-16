@@ -1,14 +1,15 @@
 import BaseShip from "./../common/Ship";
+import IView from "./IVIew";
 import Game from "./Game";
+import Vector from "../common/Vector";
 import * as assets from "./assets";
 import * as constants from "./../common/constants";
-import Vector from "../common/Vector";
 
 
 
 export default class Ship extends BaseShip {
 
-
+	protected game: Game;
 	public object: THREE.Object3D;
 
 
@@ -55,6 +56,41 @@ export default class Ship extends BaseShip {
 
 		this.object.position.set(this.position.x + scratchX, this.position.y + scratchY, 0.0);
 		this.object.rotation.z = this.rotation - constants.PIHALF;
+	}
+
+
+	public calculateView(viewportAspectRatio: number): IView {
+		const containBaseWidth = 100;
+		const containBaseHeight = 100;
+		const maxSpeedZoomOut = 5.0;
+
+		const speed = this.velocity.getSize();
+		const speedMax = this.getMaxSpeed();
+		const speedRatio = Math.min(1, speedMax > 0 ? speed / speedMax : 0);
+
+		const zoom = 1 + speedRatio * (maxSpeedZoomOut - 1);
+		const containWidth = containBaseWidth * zoom;
+		const containHeight = containBaseHeight * zoom;
+		const containAspectRatio = containWidth / containHeight;
+		const maxViewOffset = Math.min(containWidth, containHeight) / 2 - 10;
+
+		const camPos = this.position.clone();
+		if (speedRatio > 0) {
+			const vOffset = this.velocity.clone();
+			vOffset.scale(maxViewOffset * speedRatio / speed);
+			camPos.add(vOffset);
+		}
+
+		const matchWidth = (containAspectRatio > viewportAspectRatio);
+		const viewWidth = (matchWidth) ? containWidth : containWidth * viewportAspectRatio;
+		const viewHeight = (matchWidth) ? containHeight / viewportAspectRatio : containHeight;
+
+		return {
+			x: camPos.x,
+			y: camPos.y,
+			w: viewWidth,
+			h: viewHeight,
+		};
 	}
 
 }

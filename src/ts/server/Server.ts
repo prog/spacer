@@ -32,7 +32,7 @@ export default class Server {
 
 
 	public run(): void {
-		// todo: run game
+		this.game.run();
 		console.log("Starting Spacer server");
 		this.httpServer.listen(this.serverPort);
 	}

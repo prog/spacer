@@ -10,10 +10,5 @@ export default class Game extends BaseGame {
 
 		// todo: test collisions
 	}
-	
-	
-	public run() {
-		
-	}
 
 }

@@ -1,4 +1,4 @@
-import Object from "./Object";
+import Object from "./../common/Object";
 import Game from "./Game";
 
 
@@ -6,8 +6,11 @@ import Game from "./Game";
 export default class Particle extends Object {
 
 
+	protected game: Game;
 	protected timeToLive: number;
 	protected liveTime: number;
+
+	public object: THREE.Object3D;
 
 
 	public constructor(game: Game) {
@@ -24,5 +27,7 @@ export default class Particle extends Object {
 			this.game.removeParticle(this);
 		}
 	}
+
+	public beforeRender(): void { }
 
 }

@@ -53,23 +53,6 @@ export default class Client {
 	}
 
 
-	protected stopRenderingLoop() {
-		// todo
-	}
-
-
-	protected runGameLoop() {
-		setInterval(() => {
-			this.game.tick();
-		}, 1000/25);
-	}
-
-
-	protected stopGameLoop() {
-		//
-	}
-
-
 	protected handleKey(evt: KeyboardEvent) {
 		const keyDown = ("keydown" === evt.type);
 		switch (evt.keyCode) {
@@ -116,7 +99,7 @@ export default class Client {
 		//this.socket.connect();
 		// this.socket.emit("join", {name: "Jon Doe"});
 		this.runRenderingLoop();
-		this.runGameLoop();
+		this.game.run();
 	}
 
 }
