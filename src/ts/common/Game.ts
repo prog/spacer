@@ -7,8 +7,21 @@ import Vector from "./Vector";
 export default class Game {
 
 
+	protected tickInterval = 1000 / 25; // [ms]
+
+	protected refTickNumber: number = null;
+	protected refTickTime: number = null;
+	protected tickNumber: number = 0;
+
 	protected ships: Ship[] = [];
 	protected rockets: Rocket[] = [];
+
+
+	public getTicksTime(): number {
+		const now = (new Date()).getTime();
+		const elapsed = (now - this.refTickTime);
+		return this.refTickNumber + (elapsed / this.tickInterval);
+	}
 
 
 	/** Return enviroment viscosity by position. */
@@ -47,9 +60,21 @@ export default class Game {
 	}
 
 
-	public run() {
-		this.tick();
-		setInterval(this.tick.bind(this), 1000/25);
-	}
+	protected runTicks(): void {
+		const now = (new Date()).getTime();
+		const elapsedTime = now - this.refTickTime;
+		const elapsedTicks = (elapsedTime / this.tickInterval);
+		const tickNumber = Math.floor(this.refTickNumber + elapsedTicks);
+		const nextTickNumber = (tickNumber + 1);
+		const nextTickTime = (nextTickNumber - this.refTickNumber) * this.tickInterval + this.refTickTime;
+		const nextTickTimeout = (nextTickTime - now);
+
+		while (tickNumber > this.tickNumber) {
+			this.tickNumber++;
+			this.tick();
+		}
+
+		setTimeout(this.runTicks.bind(this), nextTickTimeout);
+	};
 
 }

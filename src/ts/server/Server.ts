@@ -16,12 +16,24 @@ export default class Server {
 	public serverPort: number;
 
 
+	protected handlePing(socket: SocketIO.Socket, number: number, latency: number) {
+		socket.emit("p", number, this.game.getTicksTime());
+	}
+
+
+	protected handleClientConnected(socket: SocketIO.Socket) {
+		socket.on("p", this.handlePing.bind(this, socket));
+	}
+
+
 	public constructor() {
 		this.game = new Game();
 		this.app = express();
 		this.httpServer = http.createServer(this.app as any);
 		this.io = socketIO(this.httpServer);
 		this.io.serveClient(true);
+		this.io.on("connection", this.handleClientConnected.bind(this));
+
 		this.serverPort = 8080;
 
 		this.app.use("/res", express.static(path.resolve("public/res")));
@@ -32,8 +44,8 @@ export default class Server {
 
 
 	public run(): void {
-		this.game.run();
 		console.log("Starting Spacer server");
+		this.game.run();
 		this.httpServer.listen(this.serverPort);
 	}
 

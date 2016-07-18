@@ -100,4 +100,16 @@ export default class Game extends BaseGame {
 		this.particles.forEach((particle: Particle) => particle.tick());
 	}
 
+
+	public run(refTime: number, serverTicks: number) {
+		const now = new Date().getTime();
+		const elapsedTime = now - refTime;
+		const adjustedServerTicks = serverTicks + (elapsedTime / this.tickInterval);
+		const tickNumber = Math.floor(adjustedServerTicks);
+
+		this.refTickTime = refTime;
+		this.refTickNumber = serverTicks;
+		this.tickNumber = tickNumber;
+		this.runTicks();
+	}
 }

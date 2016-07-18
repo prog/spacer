@@ -1,4 +1,5 @@
 import Game from "./Game";
+import Ping from "./net/Ping";
 import Ship from "./Ship";
 import * as keys from "./keys";
 declare var io: SocketIOClientStatic;
@@ -9,9 +10,11 @@ export default class Client {
 
 
 	protected game: Game;
+	protected ping: Ping;
 	protected socket: SocketIOClient.Socket;
 	protected renderer: THREE.Renderer;
 	protected viewportAspectRatio;
+
 
 	protected ship: Ship;
 
@@ -23,27 +26,6 @@ export default class Client {
 
 		this.renderer.setSize(width * q, height * q);
 		this.viewportAspectRatio = height > 0 ? width / height : 1;
-	}
-
-
-
-	protected handleSocketConnected() {
-
-	}
-
-
-	protected handleSocketDisconnected() {
-
-	}
-
-
-	protected connect() {
-		this.socket.connect();
-	}
-
-
-	protected disconnect() {
-
 	}
 
 
@@ -77,14 +59,11 @@ export default class Client {
 	public constructor() {
 		this.game = new Game();
 		this.ship = this.game.createShip();
-		/*
 		this.socket = io({
 			transports: ["websocket"],
 			autoConnect: false,
 		});
-		this.socket.on("connect", this.handleSocketConnected.bind(this));
-		this.socket.on("disconnect", this.handleSocketDisconnected.bind(this));
-		*/
+		this.ping = new Ping(this.socket);
 		this.renderer = new THREE.WebGLRenderer();
 
 		this.handleViewportResize();
@@ -95,11 +74,24 @@ export default class Client {
 	}
 
 
-	public run(): void {
-		//this.socket.connect();
-		// this.socket.emit("join", {name: "Jon Doe"});
+	protected startGame(time, serverTicks) {
+		this.game.run(time, serverTicks);
 		this.runRenderingLoop();
-		this.game.run();
+	}
+
+
+	public run(): void {
+		this.socket.on("connect", () => {
+			this.ping.pingPong((pongTime: number, latency: number, serverTicks: number) => {
+				if (null !== pongTime) {
+					this.startGame(pongTime - latency / 2, serverTicks);
+				} else {
+					// sync error
+				}
+			});
+		});
+
+		this.socket.connect();
 	}
 
 }

@@ -11,4 +11,12 @@ export default class Game extends BaseGame {
 		// todo: test collisions
 	}
 
+
+	public run() {
+		this.refTickNumber = 1;
+		this.refTickTime = new Date().getTime();
+		this.tickNumber = 0;
+		this.runTicks();
+	}
+
 }
