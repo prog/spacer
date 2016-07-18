@@ -1,3 +1,4 @@
+const beepbeep = require("beepbeep");
 const gulp = require("gulp");
 const nodeExternals = require("webpack-node-externals");
 const webpackStream = require("webpack-stream");
@@ -13,6 +14,12 @@ gulp.task("js-client-watch", function() { return js_client({watch: true}); });
 gulp.task("js-watch", ["js-server-watch", "js-client-watch"]);
 
 
+function errorHandler(error) {
+	console.log(error.toString());
+	beepbeep();
+	this.emit("end");
+}
+
 
 function js(options) {
 	const webpackConfig = Object.assign({
@@ -20,10 +27,11 @@ function js(options) {
 		module: {loaders: [{test: /\.ts$/, loader: "ts-loader", exclude: /node_modules/}]},
 		plugins: options.uglify ? [new webpackStream.webpack.optimize.UglifyJsPlugin()] : [],
 	}, options, { src: null, dest: null, uglify: null});
-	
+
 	return gulp
 		.src(options.src)
 		.pipe(webpackStream(webpackConfig))
+		.on("error", errorHandler)
 		.pipe(gulp.dest(options.dest));
 }
 
