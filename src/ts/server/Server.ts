@@ -34,7 +34,7 @@ export default class Server {
 		this.io.serveClient(true);
 		this.io.on("connection", this.handleClientConnected.bind(this));
 
-		this.serverPort = 8080;
+		this.serverPort = process.env.PORT || 8080;
 
 		this.app.use("/res", express.static(path.resolve("public/res")));
 		this.app.get("/", function(req, res) {
@@ -44,7 +44,7 @@ export default class Server {
 
 
 	public run(): void {
-		console.log("Starting Spacer server");
+		console.log("Starting Spacer server on port " + this.serverPort);
 		this.game.run();
 		this.httpServer.listen(this.serverPort);
 	}
